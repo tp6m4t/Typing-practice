@@ -12,3 +12,7 @@ $.getJSON(url)
 .fail(function(msg){
     console.log("Fail!");
 })
+let today=new Date().getDay;
+if(db.lastTaskTime!=today){
+    db.taskTime=0;
+}
