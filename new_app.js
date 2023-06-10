@@ -24,6 +24,7 @@ const app = Vue.createApp({
       'ˊ', 'ˇ', 'ˋ', '˙', '_']
     //題目生成
     const generateQuestion = () => {
+      updateProgress()
       let question = ''
       let length = state.range
       while (question.length < length) {
@@ -62,6 +63,10 @@ const app = Vue.createApp({
       dbUpdataRange(state.range)
       generateQuestion()
     }
+    const updateProgress=()=>{
+      $("meter").attr("max",30*60);
+      $("meter").attr("value",state.taskTime);
+  }
 
     // call generateQuestion function on component mount
     Vue.onMounted(() => {
@@ -70,7 +75,7 @@ const app = Vue.createApp({
 
     const checkAnswer = (event) => {
       if(chakeval==0){
-        startTime=new Date().getTime();
+        startTime=Math.floor(new Date().getTime()/1000);
       }
       state.userInput = ''
       const answer = state.question
@@ -95,8 +100,8 @@ const app = Vue.createApp({
         chakeval++
         state.message = ''
         if (chakeval === state.maxProgress) {
-          taskTime+=Date().getTime()-startTime;
-          dbUpdata(new Date().getDay,);
+          state.taskTime+=Math.floor(new Date().getTime()/1000)-startTime;
+          dbUpdata(Math.floor(new Date().getTime()/1000/60/60/24),state.taskTime);
           state.message = '恭喜！你已經完成練習！';
           setTimeout(generateQuestion(), 500);
         }
@@ -129,7 +134,7 @@ const app = Vue.createApp({
   }
 })
 
-app.mount('#app')
+
 var chakeval = 0;
 var input = 0;
 var input_time

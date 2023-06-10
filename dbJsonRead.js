@@ -1,5 +1,8 @@
 let url = "https://chkeybrjsonserverfinalproject.azurewebsites.net/keybr";
 let db={};
+
+
+
 $.getJSON(url)
 .done(function(msg){
     console.log("資料庫連結成功");
@@ -8,11 +11,12 @@ $.getJSON(url)
     db.range=msg.range;
     db.taskTime=msg.taskTime;
     db.lastTaskDay=msg.lastTaskDay;
+    app.mount('#app')
 })
 .fail(function(msg){
     console.log("Fail!");
 })
-let today=new Date().getDay;
+let today=Math.floor(new Date().getTime()/1000/60/60/24);
 if(db.lastTaskDay!=today){
     db.taskTime=0;
 }
@@ -26,7 +30,7 @@ function dbUpdataLevel(level){
     })
 
 }
-function InputRange(range){
+function dbUpdataRange(range){
     $.ajax({
         url:url,
         type:'PATCH',
@@ -45,11 +49,14 @@ function dbUpdata(day,taskTime){
         return;
     }
 
-    xmlHttpRequest.open("PUT",url,true);
+    xmlHttpRequest.open("PATCH",url,true);
     xmlHttpRequest.setRequestHeader("Content-type",'application/json');
-    xmlHttpRequest.send(`lastTaskDay=${day}`);
-    xmlHttpRequest.send(`taskTime=${taskTime}`);
-
+    const data = JSON.stringify({
+        lastTaskDay: day,
+        taskTime: taskTime
+    });
+    
+    xmlHttpRequest.send(data);
 }
 
 
