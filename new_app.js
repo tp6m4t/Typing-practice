@@ -9,7 +9,8 @@ const app = Vue.createApp({
       inputClasses: [],
       char_level: new Map,
       range: db.range,
-      level: db.level
+      level: db.level,
+      taskTime:db.taskTime
     })
     //題目表
     const questionList = [
@@ -68,6 +69,9 @@ const app = Vue.createApp({
     })
 
     const checkAnswer = (event) => {
+      if(chakeval==0){
+        startTime=new Date().getTime();
+      }
       state.userInput = ''
       const answer = state.question
       console.log(`you:${phoneticKeyboard[event.key]} true:${answer[chakeval]}`)
@@ -91,7 +95,9 @@ const app = Vue.createApp({
         chakeval++
         state.message = ''
         if (chakeval === state.maxProgress) {
-          state.message = '恭喜！你已經完成練習！'
+          taskTime+=Date().getTime()-startTime;
+          dbUpdata(new Date().getDay,);
+          state.message = '恭喜！你已經完成練習！';
           setTimeout(generateQuestion(), 500);
         }
       }

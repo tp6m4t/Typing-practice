@@ -21,15 +21,15 @@ if(db.lastTaskDay!=today){
 function dbUpdataLevel(level){
     $.ajax({
         url:url,
-        type:'PUT',
+        type:'PATCH',
         data:`level=${level}`
     })
 
 }
-function Inputrange(range){
+function InputRange(range){
     $.ajax({
         url:url,
-        type:'PUT',
+        type:'PATCH',
         data:`range=${range}`
     })
 
