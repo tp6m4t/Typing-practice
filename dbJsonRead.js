@@ -1,7 +1,7 @@
 let url = "https://chkeybrjsonserverfinalproject.azurewebsites.net/keybr";
 let db;
 $.getJSON(url)
-.dene(function(msg){
+.done(function(msg){
     console.log("資料庫連結成功");
     db.level=msg.level;
     db.range=msg.range;
