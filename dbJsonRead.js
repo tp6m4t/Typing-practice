@@ -3,6 +3,7 @@ let db;
 $.getJSON(url)
 .done(function(msg){
     console.log("資料庫連結成功");
+    console.log(msg);
     db.level=msg.level;
     db.range=msg.range;
     db.taskTime=msg.taskTime;
