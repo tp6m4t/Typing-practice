@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注音打字練習</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body style="background-color: #daa26b;">
+    <div style="width: 100%;height: 100%;">
+    <div id="app" onclick="input=1; document.getElementsByClassName('input')[0].focus();" style="background-color: #ffdfbe;" >
+      <div class="container" style="background-color: #ffdfbe;">
+        <h1 class="title">注音打字練習</h1>
+        <input v-model="state.range" type="range" min="50" step="5" max="150" @input="generateQuestion"  >字數 : {{state.range}}
+        <input v-model="state.level" type="range" min="2" max="37" @input="generateQuestion" >等級 : {{questionList[state.level-1]}}
+        <div class="all-analyze-table">
+          <table>
+            <tr>
+              <td v-for="(value,key) in Array.from(state.char_level)"
+               :style="{color: ((key > state.level-1)?'rgb(162,162,162)': 'rgb('+String(value[1].字數?200-200*value[1].正確/value[1].字數:0)+',0,0)')}" >
+               {{value[0]}} : {{value[1].字數?(value[1].正確/value[1].字數).toFixed(2):0}}</td>
+            </tr>
+          </table>
+
+        </div>
+        <div class="progress-container">
+            <div class="progress" :style="{ width: state.progressPercent }"></div>
+        </div>
+        <div class="question">
+          <div class="comparison" >
+            <span v-for="(char, index) in state.question" :key="index"
+              :class="{ 'correct-char': state.inputClasses[index]=='correct-char', 'incorrect-char':state.inputClasses[index]=='incorrect-char' }">
+              {{ char }}
+            </span>
+          </div>
+        </div>
+        <div class="input-container">
+          <input class="input" type="text" v-model="state.userInput" @keydown="checkAnswer" autocomplete="off" autocorrect="off" @blur="unfoces"style="height: 0; overflow: hidden;" >
+          
+          <div class="message">{{ state.message }}</div>
+        </div>
+        <button id="newq" class="button" @click="generateQuestion">重新生成題目</button>
+      </div>
+    </div>
+    <div id="keybr" class="container" style="
+    width: 628px;
+    height: 208px; background-color: #f4d6b6;">
+      <svg  x="210" y="210" style="
+        width: 628px;
+        height: 208px;" >
+            <svg class="keybr" x="0" y="0" data-key="Backquote">
+                <rect class="odd" x="0" y="0" width="40" height="40"></rect>
+                <text class="afO9z9UoTX tsEktbSxgC" x="10" y="15">~</text>
+                <text class="afO9z9UoTX tsEktbSxgC" x="10" y="30">`</text>
+            </svg>
+            <svg class="keybr" x="42" y="0" data-key="Digit1">
+                <rect class="odd" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX tsEktbSxgC" x="10" y="15">ㄅ</text><text class="afO9z9UoTX tsEktbSxgC" x="10" y="30">1</text>
+            </svg><svg class="keybr" x="84" y="0" data-key="Digit2">
+                <rect class="even" x="0" y="0" width="40" height="40" ></rect><text class="afO9z9UoTX tsEktbSxgC" x="10" y="15">ㄉ</text><text class="afO9z9UoTX tsEktbSxgC" x="10" y="30">2</text>
+            </svg><svg class="keybr" x="126" y="0" data-key="Digit3">
+                <rect class="odd" x="0" y="0" width="40" height="40"></rect><text style="font-size: 25px;" class="afO9z9UoTX tsEktbSxgC" x="10" y="25">ˇ</text><text class="afO9z9UoTX tsEktbSxgC" x="10" y="30">3</text>
+            </svg><svg class="keybr" x="168" y="0" data-key="Digit4">
+                <rect class="even" x="0" y="0" width="40" height="40"></rect><text style="font-size: 25px;" class="afO9z9UoTX tsEktbSxgC" x="10" y="25">ˋ</text><text class="afO9z9UoTX tsEktbSxgC" x="10" y="30">4</text>
+            </svg><svg class="keybr" x="210" y="0" data-key="Digit5">
+                <rect class="even" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX tsEktbSxgC" x="10" y="15">ㄓ</text><text class="afO9z9UoTX tsEktbSxgC" x="10" y="30">5</text>
+            </svg><svg class="keybr" x="252" y="0" data-key="Digit6">
+                <rect class="even" x="0" y="0" width="40" height="40"></rect><text style="font-size: 25px;" class="afO9z9UoTX tsEktbSxgC" x="10" y="25">ˊ</text><text class="afO9z9UoTX tsEktbSxgC" x="10" y="30">6</text>
+            </svg><svg class="keybr" x="294" y="0" data-key="Digit7">
+                <rect class="even" x="0" y="0" width="40" height="40"></rect><text  style="font-size: 25px;" class="afO9z9UoTX tsEktbSxgC" x="10" y="25">˙</text><text class="afO9z9UoTX tsEktbSxgC" x="10" y="30">7</text>
+            </svg><svg class="keybr" x="336" y="0" data-key="Digit8">
+                <rect class="odd" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX tsEktbSxgC" x="10" y="15">ㄚ</text><text class="afO9z9UoTX tsEktbSxgC" x="10" y="30">8</text>
+            </svg><svg class="keybr" x="378" y="0" data-key="Digit9">
+                <rect class="even" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX tsEktbSxgC" x="10" y="15">ㄞ</text><text class="afO9z9UoTX tsEktbSxgC" x="10" y="30">9</text>
+            </svg><svg class="keybr" x="420" y="0" data-key="Digit0">
+                <rect class="odd" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX tsEktbSxgC" x="10" y="15">ㄢ</text><text class="afO9z9UoTX tsEktbSxgC" x="10" y="30">0</text>
+            </svg><svg class="keybr" x="462" y="0" data-key="Minus">
+                <rect class="odd" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX tsEktbSxgC" x="10" y="15">ㄦ</text><text class="afO9z9UoTX tsEktbSxgC" x="10" y="30">-</text>
+            </svg><svg class="keybr" x="504" y="0" data-key="Equal">
+                <rect class="odd" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX tsEktbSxgC" x="10" y="15">+</text><text class="afO9z9UoTX tsEktbSxgC" x="10" y="30">=</text>
+            </svg><svg class="keybr" x="546" y="0" data-key="Backspace">
+                <rect class="odd" x="0" y="0" width="83" height="40"></rect><text class="afO9z9UoTX" x="15" y="25">Backspace</text>
+            </svg><svg class="keybr" x="0" y="42" data-key="Tab">
+                <rect class="odd" x="0" y="0" width="63" height="40"></rect><text class="afO9z9UoTX" x="15" y="25">Tab</text>
+            </svg><svg class="keybr" x="65" y="42" data-key="KeyQ">
+                <rect class="odd" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX XJ2rDswuKT" x="15" y="25">ㄆ</text>
+            </svg><svg class="keybr" x="107" y="42" data-key="KeyW">
+                <rect class="even" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX XJ2rDswuKT" x="15" y="25">ㄊ</text>
+            </svg><svg class="keybr" x="149" y="42" data-key="KeyE">
+                <rect class="odd" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX XJ2rDswuKT" x="15" y="25">ㄍ</text>
+            </svg><svg class="keybr" x="191" y="42" data-key="KeyR">
+                <rect class="even" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX XJ2rDswuKT" x="15" y="25">ㄐ</text>
+            </svg><svg class="keybr" x="233" y="42" data-key="KeyT">
+                <rect class="even" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX XJ2rDswuKT" x="15" y="25">ㄔ</text>
+            </svg><svg class="keybr" x="275" y="42" data-key="KeyY">
+                <rect class="even" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX XJ2rDswuKT" x="15" y="25">ㄗ</text>
+            </svg><svg class="keybr" x="317" y="42" data-key="KeyU">
+                <rect class="even" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX XJ2rDswuKT" x="15" y="25">ㄧ</text>
+            </svg><svg class="keybr" x="359" y="42" data-key="KeyI">
+                <rect class="odd" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX XJ2rDswuKT" x="15" y="25">ㄛ</text>
+            </svg><svg class="keybr hobMjUMzZu" x="401" y="42" data-key="KeyO">
+                <rect class="even" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX XJ2rDswuKT" x="15" y="25">ㄟ</text>
+            </svg><svg class="keybr U7gV3YFgvL" x="443" y="42" data-key="KeyP">
+                <rect class="odd" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX XJ2rDswuKT" x="15" y="25">ㄣ</text>
+            </svg><svg class="keybr U7gV3YFgvL" x="485" y="42" data-key="BracketLeft">
+                <rect class="odd" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX tsEktbSxgC" x="10" y="15">{</text><text class="afO9z9UoTX tsEktbSxgC" x="10" y="30">[</text>
+            </svg><svg class="keybr U7gV3YFgvL" x="527" y="42" data-key="BracketRight">
+                <rect class="odd" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX tsEktbSxgC" x="10" y="15">}</text><text class="afO9z9UoTX tsEktbSxgC" x="10" y="30">]</text>
+            </svg><svg class="keybr U7gV3YFgvL" x="569" y="42" data-key="Backslash">
+                <rect class="odd" x="0" y="0" width="60" height="40"></rect><text class="afO9z9UoTX tsEktbSxgC" x="10" y="15">|</text><text class="afO9z9UoTX tsEktbSxgC" x="10" y="30">\</text>
+            </svg><svg class="keybr" x="0" y="84" data-key="CapsLock">
+                <rect class="odd" x="0" y="0" width="70" height="40"></rect><text class="afO9z9UoTX" x="15" y="25">Caps Lock</text>
+            </svg><svg class="keybr kimZ8er9uo" x="72" y="84" data-key="KeyA">
+                <rect class="odd" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX XJ2rDswuKT" x="15" y="25">ㄇ</text>
+            </svg><svg class="keybr lTli91aVpJ" x="114" y="84" data-key="KeyS">
+                <rect class="even" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX XJ2rDswuKT" x="15" y="25">ㄋ</text>
+            </svg><svg class="keybr" x="156" y="84" data-key="KeyD">
+                <rect class="odd" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX XJ2rDswuKT" x="15" y="25">ㄎ</text>
+            </svg><svg class="keybr" x="198" y="84" data-key="KeyF">
+                <rect class="even" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX XJ2rDswuKT" x="15" y="25">ㄑ</text><text class="afO9z9UoTX tsEktbSxgC" x="15" y="30">__</text>
+            </svg><svg class="keybr" x="240" y="84" data-key="KeyG">
+                <rect class="even" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX XJ2rDswuKT" x="15" y="25">ㄕ</text>
+            </svg><svg class="keybr" x="282" y="84" data-key="KeyH">
+                <rect class="even" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX XJ2rDswuKT" x="15" y="25">ㄘ</text>
+            </svg><svg class="keybr" x="324" y="84" data-key="KeyJ">
+                <rect class="even" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX XJ2rDswuKT" x="15" y="25">ㄨ</text><text class="afO9z9UoTX tsEktbSxgC" x="15" y="30">__</text>
+            </svg><svg class="keybr" x="366" y="84" data-key="KeyK">
+                <rect class="odd" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX XJ2rDswuKT" x="15" y="25">ㄜ</text>
+            </svg><svg class="keybr hobMjUMzZu" x="408" y="84" data-key="KeyL">
+                <rect class="even" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX XJ2rDswuKT" x="15" y="25">ㄠ</text>
+            </svg><svg class="keybr U7gV3YFgvL" x="450" y="84" data-key="Semicolon">
+                <rect class="odd" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX tsEktbSxgC" x="10" y="15">ㄤ</text><text class="afO9z9UoTX tsEktbSxgC" x="10" y="30">;</text>
+            </svg><svg class="keybr U7gV3YFgvL" x="492" y="84" data-key="Quote">
+                <rect class="odd" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX tsEktbSxgC" x="10" y="15">"</text><text class="afO9z9UoTX tsEktbSxgC" x="10" y="30">'</text>
+            </svg><svg class="keybr" x="534" y="84" data-key="Enter">
+                <rect class="odd" x="0" y="0" width="95" height="40"></rect><text class="afO9z9UoTX" x="15" y="25">Enter</text>
+            </svg><svg class="keybr" x="0" y="126" data-key="ShiftLeft">
+                <rect class="odd" x="0" y="0" width="92" height="40"></rect><text class="afO9z9UoTX" x="15" y="25">Shift</text>
+            </svg><svg class="keybr kimZ8er9uo" x="94" y="126" data-key="KeyZ">
+                <rect class="odd" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX XJ2rDswuKT" x="15" y="25">ㄈ</text>
+            </svg><svg class="keybr lTli91aVpJ" x="136" y="126" data-key="KeyX">
+                <rect class="even" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX XJ2rDswuKT" x="15" y="25">ㄌ</text>
+            </svg><svg class="keybr" x="178" y="126" data-key="KeyC">
+                <rect class="odd" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX XJ2rDswuKT" x="15" y="25">ㄏ</text>
+            </svg><svg class="keybr" x="220" y="126" data-key="KeyV">
+                <rect class="even" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX XJ2rDswuKT" x="15" y="25">ㄒ</text>
+            </svg><svg class="keybr" x="262" y="126" data-key="KeyB">
+                <rect class="even" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX XJ2rDswuKT" x="15" y="25">ㄖ</text>
+            </svg><svg class="keybr" x="304" y="126" data-key="KeyN">
+                <rect class="even" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX XJ2rDswuKT" x="15" y="25">ㄙ</text>
+            </svg><svg class="keybr" x="346" y="126" data-key="KeyM">
+                <rect class="even" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX XJ2rDswuKT" x="15" y="25">ㄩ</text>
+            </svg><svg class="keybr" x="388" y="126" data-key="Comma">
+                <rect class="odd" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX tsEktbSxgC" x="10" y="15">ㄝ</text><text class="afO9z9UoTX tsEktbSxgC" x="10" y="30">,</text>
+            </svg><svg class="keybr hobMjUMzZu" x="430" y="126" data-key="Period">
+                <rect class="even" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX tsEktbSxgC" x="10" y="15">ㄡ</text><text class="afO9z9UoTX tsEktbSxgC" x="10" y="30">.</text>
+            </svg><svg class="keybr U7gV3YFgvL" x="472" y="126" data-key="Slash">
+                <rect class="odd" x="0" y="0" width="40" height="40"></rect><text class="afO9z9UoTX tsEktbSxgC" x="10" y="15">ㄥ</text><text class="afO9z9UoTX tsEktbSxgC" x="10" y="30">/</text>
+            </svg><svg class="keybr" x="514" y="126" data-key="ShiftRight">
+                <rect class="odd" x="0" y="0" width="115" height="40"></rect><text class="afO9z9UoTX" x="15" y="25">Shift</text>
+            </svg><svg class="keybr" x="0" y="168" data-key="ControlLeft">
+                <rect class="odd" x="0" y="0" width="63" height="40"></rect><text class="afO9z9UoTX" x="15" y="25">Ctrl</text>
+            </svg><svg class="keybr" x="65" y="168" data-key="AltLeft">
+                <rect class="odd" x="0" y="0" width="63" height="40"></rect><text class="afO9z9UoTX" x="15" y="25">Alt</text>
+            </svg><svg class="keybr" x="130" y="168" data-key="Space">
+                <rect class="odd" x="0" y="0" width="369" height="40"></rect>
+            </svg><svg class="keybr" x="501" y="168" data-key="AltRight">
+                <rect class="odd" x="0" y="0" width="63" height="40"></rect><text class="afO9z9UoTX" x="15" y="25">Alt</text>
+            </svg><svg class="keybr" x="566" y="168" data-key="ControlRight">
+                <rect class="odd" x="0" y="0" width="63" height="40"></rect><text class="afO9z9UoTX" x="15" y="25">Ctrl</text>
+            </svg>
+        </svg>
+    </div>
+  </div>
+    <script src="https://unpkg.com/vue@next"></script>
+    <script src="./new_app.js"></script>
+  </body>
+</html>
