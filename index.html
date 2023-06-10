@@ -11,8 +11,8 @@
     <div id="app" onclick="input=1; document.getElementsByClassName('input')[0].focus();" style="background-color: #ffdfbe;" >
       <div class="container" style="background-color: #ffdfbe;">
         <h1 class="title">注音打字練習</h1>
-        <input v-model="state.range" type="range" min="50" step="5" max="150" @input="generateQuestion"  >字數 : {{state.range}}
-        <input v-model="state.level" type="range" min="2" max="37" @input="generateQuestion" >等級 : {{questionList[state.level-1]}}
+        <input v-model="state.range" type="range" min="50" step="5" max="150" @input="rangeInput"  >字數 : {{state.range}}
+        <input v-model="state.level" type="range" min="2" max="37" @input="levelInput" >等級 : {{questionList[state.level-1]}}
         <div class="all-analyze-table">
           <table>
             <tr>

@@ -8,8 +8,8 @@ const app = Vue.createApp({
       message: '',
       inputClasses: [],
       char_level: new Map,
-      range: 100,
-      level: 2
+      range: db.range,
+      level: db.level
     })
     //題目表
     const questionList = [
@@ -51,6 +51,15 @@ const app = Vue.createApp({
       console.log(Array.from(state.char_level))
 
 
+    }
+
+    const levelInput=()=>{
+      dbUpdataLevel(state.level)
+      generateQuestion()
+    }
+    const rangeInput=()=>{
+      dbUpdataRange(state.range)
+      generateQuestion()
     }
 
     // call generateQuestion function on component mount
@@ -105,6 +114,8 @@ const app = Vue.createApp({
     return {
       state,
       generateQuestion,
+      levelInput,
+      rangeInput,
       checkAnswer,
       unfoces,
       questionList,

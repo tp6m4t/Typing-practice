@@ -18,13 +18,22 @@ if(db.lastTaskDay!=today){
 }
 
 
-/*function dbUpdata(day,taskTime){
+function dbUpdataLevel(level){
     $.ajax({
-
+        url:url,
+        type:'PUT',
+        data:`level=${level}`
     })
 
-}*/
+}
+function Inputrange(range){
+    $.ajax({
+        url:url,
+        type:'PUT',
+        data:`range=${range}`
+    })
 
+}
 
 
 function dbUpdata(day,taskTime){
@@ -42,3 +51,5 @@ function dbUpdata(day,taskTime){
     xmlHttpRequest.send(`taskTime=${taskTime}`);
 
 }
+
+
