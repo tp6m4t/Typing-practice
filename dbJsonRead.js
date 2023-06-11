@@ -11,15 +11,48 @@ $.getJSON(url)
     db.range=msg.range;
     db.taskTime=msg.taskTime;
     db.lastTaskDay=msg.lastTaskDay;
+    if(db.lastTaskDay!=today){
+        db.taskTime=0;
+    }
     app.mount('#app')
 })
 .fail(function(msg){
     console.log("Fail!");
 })
 let today=Math.floor(new Date().getTime()/1000/60/60/24);
-if(db.lastTaskDay!=today){
-    db.taskTime=0;
+
+
+
+
+
+
+let settings ={
+    enableHighAccuracy: true
+};
+navigator.geolocation.getCurrentPosition(result, error, settings);
+function result(position){
+    let thisCoords=position.coords;
+    if(thisCoords.latitude<20 || thisCoords.latitude>26 
+        || thisCoords.longitude >124 || thisCoords.longitude<116){
+            alert("This website is used to practice the phonetic system of traditional Chinese characters in Taiwan. It is currently detected that you are not located here. Please continue after confirmation")
+        }
+    console.log(`Location:${thisCoords.latitude},${thisCoords.longitude}`);
 }
+function error(err){
+    console.log(`Location:err`);
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 function dbUpdataLevel(level){

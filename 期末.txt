@@ -1,8 +1,11 @@
 隨機:題目
 RPG:鍵盤事件
-
+RPG:畫圖網頁中的鍵盤
 日期時間保存資料:EX.每日任務，熟練度分析,計時
+進度條:每日任務
+json:資料儲存
+ajax:dbUpdataLevel、dbUpdataRange
+xmlHttpRequest:dbUpdata(data,taskTime)
+地點:在使用者於非台灣地區將提醒此網站功能
+
 ytapi:教學片
-進度條
-後端:第三方登陸訊息、json
-cookie:是否登陸
