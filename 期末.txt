@@ -7,5 +7,4 @@ json:資料儲存
 ajax:dbUpdataLevel、dbUpdataRange
 xmlHttpRequest:dbUpdata(data,taskTime)
 地點:在使用者於非台灣地區將提醒此網站功能
-
 ytapi:教學片
