@@ -11,6 +11,8 @@ $.getJSON(url)
     db.range=msg.range;
     db.taskTime=msg.taskTime;
     db.lastTaskDay=msg.lastTaskDay;
+    db.KeyLevel=msg.char_level;
+    let today=Math.floor(new Date().getTime()/1000/60/60/24);
     if(db.lastTaskDay!=today){
         db.taskTime=0;
     }
@@ -19,9 +21,6 @@ $.getJSON(url)
 .fail(function(msg){
     console.log("Fail!");
 })
-let today=Math.floor(new Date().getTime()/1000/60/60/24);
-
-
 
 
 
@@ -43,18 +42,6 @@ function error(err){
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 function dbUpdataLevel(level){
     $.ajax({
         url:url,
@@ -73,7 +60,16 @@ function dbUpdataRange(range){
 }
 
 
-function dbUpdata(day,taskTime){
+function dbUpdata(day,taskTime,char_level){
+
+
+    const char_level_o = Array.from(char_level).reduce((obj, [key, value]) =>Object.assign(obj, { [key]: value} ), {})
+
+
+
+
+
+
     let xmlHttpRequest;
     if(window.XMLHttpRequest){
         xmlHttpRequest=new XMLHttpRequest();
@@ -86,10 +82,38 @@ function dbUpdata(day,taskTime){
     xmlHttpRequest.setRequestHeader("Content-type",'application/json');
     const data = JSON.stringify({
         lastTaskDay: day,
-        taskTime: taskTime
+        taskTime: taskTime,
+        char_level:char_level_o
     });
-    
     xmlHttpRequest.send(data);
+}
+
+
+function video(){
+    let modal=document.getElementById("modal")
+    modal.style.display = "block";
+    modal.onclick = function () {
+        modal.style.display = "none"; //将模态框属性设置为不可见
+        player.stopVideo();
+    }
+    function onYouTubeIframeAPIReady(){
+    
+        player=new YT.Player("player",{
+            height:"390",
+            width:"640",
+            videoId:"9jGocM0xr9E",
+            playerVars:{
+                autoplay:1,//是否自動撥放
+                controls:1,//是否顯示控制項
+                start:0,//開始秒數
+                end:0,//結束秒數
+                iv_load_policy:3
+            }
+        });
+    }
+    onYouTubeIframeAPIReady()
+
+
 }
 
 

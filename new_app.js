@@ -7,7 +7,7 @@ const app = Vue.createApp({
       maxProgress: 0,
       message: '',
       inputClasses: [],
-      char_level: new Map,
+      char_level: new Map(Object.entries(db.KeyLevel)),
       range: db.range,
       level: db.level,
       taskTime:db.taskTime
@@ -46,9 +46,11 @@ const app = Vue.createApp({
       state.message = ''
       chakeval = 0
       state.inputClasses = []
+      /*
       for (let char of all_charList) {
         state.char_level.set(char, { 字數: 0, 正確: 0 })
       }
+      */
       console.log(state.char_level)
       console.log(Array.from(state.char_level))
 
@@ -101,7 +103,7 @@ const app = Vue.createApp({
         state.message = ''
         if (chakeval === state.maxProgress) {
           state.taskTime+=Math.floor(new Date().getTime()/1000)-startTime;
-          dbUpdata(Math.floor(new Date().getTime()/1000/60/60/24),state.taskTime);
+          dbUpdata(Math.floor(new Date().getTime()/1000/60/60/24),state.taskTime,state.char_level);
           state.message = '恭喜！你已經完成練習！';
           setTimeout(generateQuestion(), 500);
         }
